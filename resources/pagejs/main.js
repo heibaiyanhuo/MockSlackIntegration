@@ -5,6 +5,8 @@ function add() {
         var chatInput = $(this);
         if (event.keyCode == 13){
             var text = chatInput.val();
+            if (text == "") return;
+            commandParsePre(text);
             var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
             block.append(createMessageDiv(text, now));
             block.scrollTop(block[0].scrollHeight);
@@ -16,10 +18,10 @@ function add() {
 }
 
 function createMessageDiv(text, now) {
-    var content = $('<div>').addClass('media').addClass('message');
+    var content = $('<div>').addClass('media').addClass('message').addClass('newMessage');
     var avatar = $('<div>').addClass('media-left');
     var textarea = $('<div>').addClass('media-body');
-    avatar.html('<a href="javascript:void(0)"><img class="media-object" src="mockava.png"></a>');
+    avatar.html('<a href="javascript:void(0)"><img class="media-object" src="resources/img/mockava.png"></a>');
 
     var time = $('<small>').addClass('media-heading').html('<b>Me  </b>' + now);
     var command = $('<p>').html(text);
@@ -29,6 +31,17 @@ function createMessageDiv(text, now) {
 
     return content;
 }
+
+function commandParsePre(command) {
+    switch(command){
+        case 'clear':
+            $('.newMessage').remove();
+            return;
+        default:
+            return;
+    }
+}
+
 
 Date.prototype.Format = function (fmt) {  
     var o = {

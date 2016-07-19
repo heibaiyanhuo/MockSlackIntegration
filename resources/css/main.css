@@ -4,24 +4,25 @@ html {
 }
 
 body {
-    min-height: 100%;
+    height: 100%;
     margin: 0px;
     padding: 0px;
     position: relative;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    overflow: hidden;
 }
 
 section.main {
     /*position: absolute;*/
-    height: 85%;
+    height: 75%;
     /*bottom: 0;*/
 }
 
 #chat {
     overflow-y: auto;
     position: absolute;
-    bottom: 100px;
-    max-height: 500px;
+    bottom: 180px;
+    max-height: 430px;
 }
 
 .message {
@@ -30,7 +31,7 @@ section.main {
 }
 
 .footer {
-    position: fixed;
+    position: relative;
     bottom: 0px;
     width: 100%;
 }
