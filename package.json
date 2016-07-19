@@ -1,0 +1,10 @@
+{
+    "name": "AnswerHub-bot",
+    "description": "slack integration",
+    "version": "0.0.1",
+    
+    "license": "MIT",
+    "dependencies": {
+        "express": "latest"
+    }
+}
