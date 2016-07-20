@@ -1,15 +1,15 @@
-let block = $('#chat');
+let chatBlock = $('#chat');
 
-function add() {
+function commandListener() {
     $('#command').keydown(function(event) {
         var chatInput = $(this);
         if (event.keyCode == 13){
             var text = chatInput.val();
             if (text == "") return;
             commandParsePre(text);
-            var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
-            block.append(createMessageDiv(text, now));
-            block.scrollTop(block[0].scrollHeight);
+            // var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
+            // block.append(createMessageDiv(text, now));
+            // block.scrollTop(block[0].scrollHeight);
             chatInput.val("");
         }
 
@@ -17,31 +17,53 @@ function add() {
 
 }
 
-function createMessageDiv(text, now) {
+function createMessageDiv(text, owner) {
     var content = $('<div>').addClass('media').addClass('message').addClass('newMessage');
     var avatar = $('<div>').addClass('media-left');
     var textarea = $('<div>').addClass('media-body');
-    avatar.html('<a href="javascript:void(0)"><img class="media-object" src="resources/img/mockava.png"></a>');
+    avatar.html('<a href="javascript:void(0)"><img class="media-object" src="resources/img/' + owner +'.png"></a>');
 
-    var time = $('<small>').addClass('media-heading').html('<b>Me  </b>' + now);
+    var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
+    var time = $('<small>').addClass('media-heading').html('<b>'+ owner + '  </b>' + now);
     var command = $('<p>').html(text);
 
     textarea.append(time).append(command);
     content.append(avatar).append(textarea);
 
-    return content;
+    chatBlock.append(content);
+    chatBlock.scrollTop(chatBlock[0].scrollHeight);
+    return;
 }
 
 function commandParsePre(command) {
-    switch(command){
+    var commandArray = command.split(' ');
+    createMessageDiv(command, 'Me');
+    switch(commandArray[0]){
+        case 'ah':
+            sendCommand(commandArray);
+            break;
         case 'clear':
             $('.newMessage').remove();
             return;
         default:
+            createMessageDiv('Sorry, I cannot understand', 'AH Bot');
             return;
     }
 }
 
+
+function sendCommand(commandArray) {
+    $.ajax({
+        method: 'GET',
+        url: '/commandParse',
+        data: {
+            'commandArray': commandArray
+        },
+        success: function (data) {
+            createMessageDiv(data, 'AH bot');
+        }
+    });
+}
 
 Date.prototype.Format = function (fmt) {  
     var o = {
@@ -60,7 +82,7 @@ Date.prototype.Format = function (fmt) {
 }
 
 $(document).ready(function() {
-        add();
+        commandListener();
 
     }
 );
