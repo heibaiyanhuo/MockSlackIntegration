@@ -15,7 +15,7 @@ app.all('/', function (req, res) {
 
 app.get('/commandParse', function(req, res){
     var cparser = new CommandParser();
-    console.log(req.query.commandArray[2]);
+    
     var result = cparser.commandParse(req.query.commandArray);
     return result;
 })
