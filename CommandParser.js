@@ -1,32 +1,19 @@
 
-function CommandParser() {};
+function CommandParser() {
+    this.command = "";
+    this.content = "";
+};
 
-
-
-CommandParser.prototype.commandParse = function(command) {
+CommandParser.prototype.init = function(text) {
 
     
-    var request = require('request');
 
-    var options = {
-        url: 'https://ahdev.es.ebay.com/services/v2/question.json?q=' + command[2],
-        method: 'GET',
-        auth: {
-            'user': '',
-            'pass': ''
-        },
-        rejectUnauthorized: false
+    this.command = text.split(" ")[0];
+
+    if(this.command.length < text.length){
+        this.content = text.substr(this.command.length);
     }
-
-    
-    request(options, function (error, response, body) {
-
-        var info = JSON.parse(body);
-        var result =  info.list[1].title;
-        
-        return result;
-    })
-
+    return;
 }
 
 module.exports = CommandParser;

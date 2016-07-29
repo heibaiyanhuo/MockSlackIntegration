@@ -1,5 +1,7 @@
 let chatBlock = $('#chat');
 
+
+
 function commandListener() {
     $('#command').keydown(function(event) {
         var chatInput = $(this);
@@ -7,9 +9,7 @@ function commandListener() {
             var text = chatInput.val();
             if (text == "") return;
             commandParsePre(text);
-            // var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
-            // block.append(createMessageDiv(text, now));
-            // block.scrollTop(block[0].scrollHeight);
+
             chatInput.val("");
         }
 
@@ -25,7 +25,7 @@ function createMessageDiv(text, owner) {
 
     var now = (new Date()).Format("yyyy-MM-dd hh:mm:ss");
     var time = $('<small>').addClass('media-heading').html('<b>'+ owner + '  </b>' + now);
-    var command = $('<p>').html(text);
+    var command = $('<div>').html(text);
 
     textarea.append(time).append(command);
     content.append(avatar).append(textarea);
@@ -36,31 +36,68 @@ function createMessageDiv(text, owner) {
 }
 
 function commandParsePre(command) {
-    var commandArray = command.split(' ');
+
+
+
+    
     createMessageDiv(command, 'Me');
-    switch(commandArray[0]){
-        case 'ah':
-            sendCommand(commandArray);
+    switch(command){
+        case 'help':
+            let text_help = '<h5>Type <b>search</b> to searching for your problems on AnswerHub<h5><br />' + 
+                            '<h5>Type <b>commit</b> to commit your problems on AnswerHub</h5><br />' +
+                            '<h5>Type <b>more</b> if you want to get more result when searching for a problem</h5><br />' +
+                            '<h5>Type <b>done</b> if you want to finish the process of searching or commiting</h5><br />'
+            createMessageDiv(text_help, 'AH Bot');
             break;
         case 'clear':
             $('.newMessage').remove();
-            return;
+            return;           
         default:
-            createMessageDiv('Sorry, I cannot understand', 'AH Bot');
+            sendCommand(command);
             return;
     }
 }
 
 
-function sendCommand(commandArray) {
+function sendCommand(command) {
     $.ajax({
         method: 'GET',
         url: '/commandParse',
         data: {
-            'commandArray': commandArray
+            'command': command
         },
         success: function (data) {
-            createMessageDiv(data, 'AH bot');
+            var result = JSON.parse(data);
+            
+            switch(result.type) {
+                case 'done':
+                case 'error':
+                case 'noMoreResult':
+                case 'noAnswer':
+                    createMessageDiv(result.content, 'AH bot');
+                    break;
+                case 'searchResult':
+                case 'moreResult':
+                    let text = '';
+                    for(var key in result.content) {
+                        text += (key + ':  ' + result.content[key] + '<br />');
+                    }
+                    createMessageDiv(text, 'AH bot');
+                    break;
+                case 'detail':
+                    createMessageDiv('The question was created by <b>' + result.content.author.username + '</b> on <b>' + result.content.creationDateFormatted + '</b>', 'AH bot');
+                    createMessageDiv(result.content.bodyAsHTML, 'AH bot');
+                    break;
+                case 'answer':
+                    let add = '<p>Created by <b>' + result.content.author.username + '</b> on <b>' + result.content.creationDateFormatted + '</b><br />'
+                    createMessageDiv(add + result.content.bodyAsHTML, 'AH bot');
+                    break;
+                default:
+                    break;
+
+            }
+
+            
         }
     });
 }
